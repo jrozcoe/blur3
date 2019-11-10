@@ -1,0 +1,57 @@
+class Image
+
+  def initialize(array)
+    @image = array
+  end
+
+  def output
+    @image.each do |row|
+      puts row.join
+    end
+  end
+
+  def find_blur_coords!
+    blur_coords = []
+    @image.each_with_index do |row, index|
+      row.each_with_index do |x, row_index|
+        if x==1
+          blur_coords << [index, row_index] 
+        end
+      end
+    end
+    return blur_coords
+  end
+
+  def blur!(blur_distance)
+    blur_coords = find_blur_coords!
+    @image.each_with_index do |row, index|
+      row.each_with_index do |x, row_index|
+        blur_coords.each do |found_index|
+          x2 = found_index[0]
+          y2 = found_index[1]
+          if manhattan_distance(row_index, index, x2, y2) <= blur_distance
+            @image[index][row_index] = 1
+          end
+        end
+      end
+    end
+  end
+
+  def manhattan_distance (x1, y1, x2, y2)
+    horizontal_distance = (x2 - x1).abs
+    vertical_distance = (y2 - y1).abs
+    distance = horizontal_distance + vertical_distance
+    return distance
+  end
+end
+image = Image.new ([
+  [0,0,0,0,1],
+  [0,1,0,0,0],
+  [0,0,0,1,0],
+  [0,0,0,0,0],
+  [1,0,0,0,0]
+])
+image.output
+image.find_blur_coords!
+image.blur!(2)
+image.output
